@@ -7,7 +7,10 @@
     "dev": "NODE_ENV=development node --watch src/index.ts",
     "build": "tsc",
     "start": "NODE_ENV=production node dist/index.js",
-    "contract:emit": "prisma contract emit"
+    "contract:emit": "prisma contract emit",
+    "db:up": "docker compose --env-file .env.development up -d",
+    "db:down": "docker compose --env-file .env.development down",
+    "db:up:prod": "docker compose --env-file .env.production up -d"
   },
   "keywords": [],
   "author": "",
