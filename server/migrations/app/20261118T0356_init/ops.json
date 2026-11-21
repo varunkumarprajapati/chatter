@@ -1,0 +1,180 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.knowledge_chunk",
+    "label": "Create table \"knowledge_chunk\"",
+    "summary": "Creates table \"knowledge_chunk\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "knowledge_chunk"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"knowledge_chunk\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"knowledge_chunk\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"knowledge_chunk\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"knowledge_chunk\"",
+        "sql": "CREATE TABLE \"public\".\"knowledge_chunk\" (\n  \"chunk_hash\" text NOT NULL,\n  \"chunk_index\" int4 NOT NULL,\n  \"created_at\" timestamptz(3) DEFAULT (now()) NOT NULL,\n  \"embedding\" vector(768) NOT NULL,\n  \"embedding_text\" text NOT NULL,\n  \"id\" uuid NOT NULL,\n  \"metadata\" json,\n  \"raw_content\" text NOT NULL,\n  \"source_id\" text NOT NULL,\n  \"updated_at\" timestamptz(3) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"knowledge_chunk\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"knowledge_chunk\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"knowledge_chunk\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "index.knowledge_chunk.knowledge_chunk_chunk_hash_idx_56328283",
+    "label": "Create index \"knowledge_chunk_chunk_hash_idx_56328283\" on \"knowledge_chunk\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "knowledge_chunk_chunk_hash_idx_56328283",
+        "table": "knowledge_chunk"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"knowledge_chunk_chunk_hash_idx_56328283\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"knowledge_chunk_chunk_hash_idx_56328283\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"knowledge_chunk_chunk_hash_idx_56328283\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"knowledge_chunk_chunk_hash_idx_56328283\"",
+        "sql": "CREATE INDEX \"knowledge_chunk_chunk_hash_idx_56328283\" ON \"public\".\"knowledge_chunk\" (\"chunk_hash\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"knowledge_chunk_chunk_hash_idx_56328283\" exists on \"knowledge_chunk\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"knowledge_chunk_chunk_hash_idx_56328283\"",
+          "i",
+          "I",
+          "\"public\".\"knowledge_chunk\"",
+          "btree",
+          "[\"chunk_hash\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.knowledge_chunk.knowledge_chunk_source_id_idx_b2d19e21",
+    "label": "Create index \"knowledge_chunk_source_id_idx_b2d19e21\" on \"knowledge_chunk\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "knowledge_chunk_source_id_idx_b2d19e21",
+        "table": "knowledge_chunk"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"knowledge_chunk_source_id_idx_b2d19e21\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"knowledge_chunk_source_id_idx_b2d19e21\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"knowledge_chunk_source_id_idx_b2d19e21\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"knowledge_chunk_source_id_idx_b2d19e21\"",
+        "sql": "CREATE INDEX \"knowledge_chunk_source_id_idx_b2d19e21\" ON \"public\".\"knowledge_chunk\" (\"source_id\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"knowledge_chunk_source_id_idx_b2d19e21\" exists on \"knowledge_chunk\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"knowledge_chunk_source_id_idx_b2d19e21\"",
+          "i",
+          "I",
+          "\"public\".\"knowledge_chunk\"",
+          "btree",
+          "[\"source_id\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.knowledge_chunk.embedding_hnsw",
+    "label": "Create HNSW cosine index on \"knowledge_chunk\".\"embedding\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "execute": [
+      {
+        "description": "create hnsw cosine index on knowledge_chunk.embedding",
+        "sql": "CREATE INDEX IF NOT EXISTS \"knowledge_chunk_embedding_hnsw_idx\" ON \"public\".\"knowledge_chunk\" USING hnsw (\"embedding\" vector_cosine_ops) WITH (m = 16, ef_construction = 64)"
+      }
+    ],
+    "precheck": [],
+    "postcheck": []
+  }
+]

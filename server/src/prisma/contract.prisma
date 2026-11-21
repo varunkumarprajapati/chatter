@@ -2,3 +2,23 @@
 types {
   Embedding768 = pgvector.Vector(768)
 }
+
+model KnowledgeChunk {
+  id            Uuid         @id @onCreate(uuid())
+
+  sourceId      String       @map("source_id")
+  chunkHash     String       @map("chunk_hash")
+  chunkIndex    Int          @map("chunk_index")
+
+  embedding     Embedding768
+  embeddingText String       @map("embedding_text")
+  rawContent    String       @map("raw_content")
+  metadata      Json?
+
+  createdAt     DateTime     @default(now()) @map("created_at")
+  updatedAt     DateTime     @onCreate(now()) @onUpdate(now()) @map("updated_at")
+
+  @@index([sourceId])
+  @@index([chunkHash])
+  @@map("knowledge_chunk")
+}

@@ -30,6 +30,7 @@ const EnvVariablesSchema = z.object({
   PORT: z.coerce.number().int().min(1).max(65535).default(8080),
   DATABASE_URL: z.string({ error: "DATABASE_URL is required" }),
   CLIENT_URL: z.string({ error: "CLIENT_URL is required" }),
+  GEMINI_API_KEY: z.string({ error: "GEMINI_API_KEY is required" }),
 });
 
 const parsedVariables = EnvVariablesSchema.safeParse({
