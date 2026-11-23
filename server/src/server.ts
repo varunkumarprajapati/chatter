@@ -8,6 +8,7 @@ import {
 import globalErrorHandler from "./middlewares/error.middleware.ts";
 
 import knowledgeRouter from "./modules/knowledge/knowledge.route.ts";
+import chatRouter from "./modules/chat/chat.route.ts";
 
 function server(): Express {
   const app = express();
@@ -15,6 +16,7 @@ function server(): Express {
 
   app.get("/", health);
   app.use("/api/v1/knowledge", knowledgeRouter);
+  app.use("/api/v1/conversation", chatRouter);
   app.use(noRouteFoundHandler);
   app.use(globalErrorHandler);
 

@@ -3,7 +3,10 @@ import type { ChunkerService } from "./services/chunker.service.ts";
 import type { EmbeddingService } from "./services/embedding.service.ts";
 import type { Document } from "@langchain/core/documents";
 import type { KnowledgeRepository } from "./knowledge.repository.ts";
-import type { Chunk, SearchChunksOptions } from "../../types/knowledge.type.ts";
+import type {
+  Chunk,
+  SearchKnowledgeFilters,
+} from "../../types/knowledge.type.ts";
 import { sha256 } from "@langchain/core/utils/hash";
 
 class KnowledgeService {
@@ -77,15 +80,9 @@ class KnowledgeService {
     return finalChunks;
   };
 
-  public searchKnowledge = async (
-    query: string,
-    options: SearchChunksOptions,
-  ) => {
+  public searchKnowledge = async (query: string) => {
     const queryEmbedding = await this.embedding.queryToEmbedding(query);
-    return await this.knowledgeRepository.searchSimilarChunks(
-      queryEmbedding,
-      options,
-    );
+    return await this.knowledgeRepository.searchSimilarChunks(queryEmbedding);
   };
 }
 export { KnowledgeService };

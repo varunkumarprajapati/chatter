@@ -29,3 +29,4 @@ const upload = multer({
 router.post("/upload", upload.single("file"), controller.uploadKnowleage);
 
 export default router;
+export { service as knowledgeService };

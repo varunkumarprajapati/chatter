@@ -10,7 +10,7 @@ export interface Chunk {
   metadata: JsonValue;
 }
 
-export interface SearchChunksOptions {
+export interface SearchKnowledgeFilters {
   limit?: number | undefined;
   minSimilarity?: number | undefined;
   sourceIds?: string[] | undefined;

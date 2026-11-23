@@ -1,5 +1,5 @@
 import { db } from "../../prisma/db.ts";
-import type { Chunk, SearchChunksOptions } from "../../types/knowledge.type.ts";
+import type { Chunk } from "../../types/knowledge.type.ts";
 
 class KnowledgeRepository {
   private readonly BATCH_SIZE = 100;
@@ -22,42 +22,32 @@ class KnowledgeRepository {
       }
     });
   };
-  public searchSimilarChunks = async (
-    queryVector: number[],
-    options: SearchChunksOptions,
-  ) => {
-    const { limit = 5, minSimilarity = 0.7, sourceIds } = options;
+
+  public searchSimilarChunks = async (queryVector: number[]) => {
+    const limit = 5;
+    const minSimilarity = 0.5;
     const maxDistance = 1 - minSimilarity;
 
-    let query = db.sql.public.knowledge_chunk
+    const plan = db.sql.public.knowledge_chunk
       .select((c) => ({
         id: c.id,
         sourceId: c.source_id,
-        chunkHash: c.chunk_hash,
         chunkIndex: c.chunk_index,
         rawContent: c.raw_content,
-        embeddingText: c.embedding_text,
         metadata: c.metadata,
       }))
       .select("distance", (f, fns) =>
         fns.cosineDistance(f.embedding, queryVector),
       )
-      .where((f, fns) =>
-        fns.lte(fns.cosineDistance(f.embedding, queryVector), maxDistance),
-      );
-
-    if (sourceIds?.length) {
-      query = query.where((f, fns) => fns.in(f.source_id, sourceIds));
-    }
-
-    const plan = query
       .orderBy((f, fns) => fns.cosineDistance(f.embedding, queryVector), {
         direction: "asc",
       })
       .limit(limit)
       .build();
 
-    return db.query(plan);
+    const rows = await db.query(plan);
+
+    return rows.filter((row) => row.distance <= maxDistance);
   };
 }
 

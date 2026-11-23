@@ -23,13 +23,16 @@
     "@types/http-errors": "^2.0.5",
     "@types/multer": "^2.3.0",
     "@types/node": "^26.6.6",
+    "@types/pg": "^8.23.1",
     "prisma": "^8.0.0-rc.33",
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "@langchain/core": "^1.4.1",
+    "@langchain/core": "^1.5.0",
     "@langchain/google": "^0.2.15",
-    "@langchain/google-genai": "^2.3.6",
+    "@langchain/google-genai": "^2.3.7",
+    "@langchain/langgraph": "^1.7.5",
+    "@langchain/langgraph-checkpoint-postgres": "^1.1.4",
     "@langchain/textsplitters": "^1.0.2",
     "@prisma/orm-extension-pgvector": "^8.0.0-rc.23",
     "@prisma/orm-postgres": "^8.0.0-rc.23",
@@ -38,6 +41,7 @@
     "express": "^5.3.0",
     "http-errors": "^2.0.1",
     "multer": "^2.5.0",
+    "pg": "^8.23.1",
     "zod": "^4.6.7"
   }
 }
